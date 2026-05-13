@@ -1,5 +1,9 @@
+"use client";
+
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 const inputStyle = {
   width: "100%",
@@ -24,13 +28,41 @@ const labelStyle = {
 } as React.CSSProperties;
 
 export default function SupportPage() {
+  const [loading, setLoading] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    const form = new FormData(e.currentTarget);
+    const supabase = createClient();
+
+    const { error } = await supabase.from("requests").insert({
+      name: form.get("name"),
+      email: form.get("email"),
+      subject: form.get("subject"),
+      message: form.get("message"),
+    });
+
+    if (error) {
+      setError("Ошибка отправки. Напишите нам напрямую: General.Conclave.Industries@gmail.com");
+      setLoading(false);
+      return;
+    }
+
+    setSent(true);
+    setLoading(false);
+  }
+
   return (
     <main style={{ background: "var(--bg)", minHeight: "100vh", overflowX: "hidden" }}>
       <Navbar />
 
       <section style={{ position: "relative", overflow: "hidden", padding: "80px 24px 120px" }}>
-        {/* Орб */}
-        <div style={{ position: "absolute", top: "0", left: "50%", transform: "translateX(-50%)", width: "700px", height: "500px", background: "radial-gradient(ellipse, rgba(41,151,255,0.1) 0%, transparent 65%)", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)", width: "700px", height: "500px", background: "radial-gradient(ellipse, rgba(41,151,255,0.1) 0%, transparent 65%)", pointerEvents: "none" }} />
 
         <div style={{ position: "relative", maxWidth: "640px", margin: "0 auto" }}>
           <p className="apple-tag anim-1" style={{ marginBottom: "1.2rem" }}>Поддержка</p>
@@ -41,36 +73,57 @@ export default function SupportPage() {
             Опишите вопрос — менеджер ответит в ближайшее время.
           </p>
 
-          <div className="liquid-glass anim-4" style={{ padding: "40px" }}>
-            <div style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}>
-              <div>
-                <label style={labelStyle}>Имя</label>
-                <input type="text" placeholder="Иван Иванов" style={inputStyle} />
-              </div>
-              <div>
-                <label style={labelStyle}>Email</label>
-                <input type="email" placeholder="your@email.com" style={inputStyle} />
-              </div>
-              <div>
-                <label style={labelStyle}>Тема</label>
-                <select style={{ ...inputStyle, background: "rgba(255,255,255,0.06)" }}>
-                  <option style={{ background: "#111" }}>Вопрос по продукту</option>
-                  <option style={{ background: "#111" }}>Заявка на разработку</option>
-                  <option style={{ background: "#111" }}>Проблема с оплатой</option>
-                  <option style={{ background: "#111" }}>Другое</option>
-                </select>
-              </div>
-              <div>
-                <label style={labelStyle}>Сообщение</label>
-                <textarea rows={5} placeholder="Опишите ваш вопрос..." style={{ ...inputStyle, resize: "none" }} />
-              </div>
-              <button className="btn-apple" style={{ width: "100%", padding: "0.9rem", fontSize: "0.95rem", border: "none", cursor: "pointer" }}>
-                Отправить заявку
-              </button>
+          {sent ? (
+            <div className="liquid-glass anim-3" style={{ padding: "56px 40px", textAlign: "center" }}>
+              <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>✓</div>
+              <h3 style={{ fontWeight: 700, fontSize: "1.2rem", letterSpacing: "-0.03em", marginBottom: "0.75rem" }}>
+                Заявка отправлена
+              </h3>
+              <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", lineHeight: 1.7 }}>
+                Мы получили ваше сообщение и свяжемся с вами в ближайшее время.
+              </p>
             </div>
-          </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="liquid-glass anim-4" style={{ padding: "40px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}>
+                <div>
+                  <label style={labelStyle}>Имя</label>
+                  <input name="name" type="text" placeholder="Иван Иванов" required style={inputStyle} />
+                </div>
+                <div>
+                  <label style={labelStyle}>Email</label>
+                  <input name="email" type="email" placeholder="your@email.com" required style={inputStyle} />
+                </div>
+                <div>
+                  <label style={labelStyle}>Тема</label>
+                  <select name="subject" style={{ ...inputStyle, background: "rgba(255,255,255,0.06)" }}>
+                    <option style={{ background: "#111" }}>Вопрос по продукту</option>
+                    <option style={{ background: "#111" }}>Заявка на разработку</option>
+                    <option style={{ background: "#111" }}>Проблема с оплатой</option>
+                    <option style={{ background: "#111" }}>Другое</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={labelStyle}>Сообщение</label>
+                  <textarea name="message" rows={5} placeholder="Опишите ваш вопрос..." required style={{ ...inputStyle, resize: "none" }} />
+                </div>
+
+                {error && (
+                  <div style={{ background: "rgba(255,59,48,0.1)", border: "1px solid rgba(255,59,48,0.3)", borderRadius: "10px", padding: "0.75rem 1rem", fontSize: "0.85rem", color: "#ff3b30" }}>
+                    {error}
+                  </div>
+                )}
+
+                <button type="submit" disabled={loading} className="btn-apple"
+                  style={{ width: "100%", padding: "0.9rem", fontSize: "0.95rem", border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}>
+                  {loading ? "Отправляем..." : "Отправить заявку"}
+                </button>
+              </div>
+            </form>
+          )}
         </div>
       </section>
+
       <Footer />
     </main>
   );

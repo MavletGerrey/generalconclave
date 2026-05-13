@@ -40,7 +40,7 @@ export default function RegisterPage() {
     }
 
     const supabase = createClient();
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: { data: { full_name: name } },
@@ -52,8 +52,16 @@ export default function RegisterPage() {
       return;
     }
 
-    router.push("/account");
-    router.refresh();
+    // Если сессия сразу создана — подтверждение не требуется
+    if (data.session) {
+      router.push("/account");
+      router.refresh();
+      return;
+    }
+
+    // Email подтверждение включено — показываем сообщение
+    setError("__confirm__");
+    setLoading(false);
   }
 
   return (
@@ -101,15 +109,21 @@ export default function RegisterPage() {
                 </label>
               </div>
 
-              {error && (
+              {error && error !== "__confirm__" && (
                 <div style={{ background: "rgba(255,59,48,0.1)", border: "1px solid rgba(255,59,48,0.3)", borderRadius: "10px", padding: "0.75rem 1rem", fontSize: "0.85rem", color: "#ff3b30" }}>
                   {error}
                 </div>
               )}
 
-              <button type="submit" disabled={loading} className="btn-apple" style={{ width: "100%", padding: "0.9rem", fontSize: "0.95rem", border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1, marginTop: "0.25rem" }}>
-                {loading ? "Создаём аккаунт..." : "Создать аккаунт"}
-              </button>
+              {error === "__confirm__" ? (
+                <div style={{ background: "rgba(48,209,88,0.1)", border: "1px solid rgba(48,209,88,0.3)", borderRadius: "10px", padding: "0.75rem 1rem", fontSize: "0.85rem", color: "var(--accent-green)", textAlign: "center" }}>
+                  ✓ Аккаунт создан! Проверьте почту и подтвердите email, затем войдите.
+                </div>
+              ) : (
+                <button type="submit" disabled={loading} className="btn-apple" style={{ width: "100%", padding: "0.9rem", fontSize: "0.95rem", border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1, marginTop: "0.25rem" }}>
+                  {loading ? "Создаём аккаунт..." : "Создать аккаунт"}
+                </button>
+              )}
             </div>
 
             <p style={{ textAlign: "center", marginTop: "1.5rem", color: "var(--text-tertiary)", fontSize: "0.85rem" }}>
