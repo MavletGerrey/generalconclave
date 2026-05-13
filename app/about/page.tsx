@@ -41,7 +41,7 @@ export default function AboutPage() {
               <p className="apple-tag" style={{ marginBottom: "1.5rem", color: "var(--text-tertiary)" }}>Реквизиты</p>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
                 {[
-                  ["Организация", "ИП Салихов Абдулгамид"],
+                  ["Организация", "ИП Салихов Абдулгамид Маратович"],
                   ["Сайт", "generalconclave.net"],
                   ["ИНН", "057205884027"],
                   ["ОГРНИП", "325050000029648"],
