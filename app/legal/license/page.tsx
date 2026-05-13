@@ -56,7 +56,7 @@ const sections = [
 
 export default function LicensePage() {
   return (
-    <main style={{ background: "var(--bg)", minHeight: "100vh", overflowX: "hidden" }}>
+    <main style={{ background: "var(--bg)", minHeight: "100vh", overflowX: "hidden", display: "flex", flexDirection: "column" }}>
       <Navbar />
       <section style={{ position: "relative", padding: "90px 24px 120px", overflow: "hidden" }}>
         <div style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)", width: "700px", height: "500px", background: "radial-gradient(ellipse, rgba(48,209,88,0.07) 0%, transparent 65%)", pointerEvents: "none" }} />

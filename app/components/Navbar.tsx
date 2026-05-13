@@ -8,13 +8,18 @@ import { useRouter } from "next/navigation";
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState<{ email?: string } | null>(null);
+  const [ready, setReady] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     const supabase = createClient();
-    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user);
+      setReady(true);
+    });
     const { data: listener } = supabase.auth.onAuthStateChange((_, session) => {
       setUser(session?.user ?? null);
+      setReady(true);
     });
     return () => listener.subscription.unsubscribe();
   }, []);
@@ -59,12 +64,9 @@ export default function Navbar() {
           {/* Правая часть */}
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             {/* Десктоп кнопки */}
-            <div className="hidden md:flex" style={{ alignItems: "center", gap: "12px" }}>
-              {user ? (
-                <>
-                  <Link href="/account" style={{ fontSize: "0.85rem", color: "var(--accent)", fontWeight: 500, textDecoration: "none" }}>Кабинет</Link>
-                  <button onClick={handleLogout} style={{ fontSize: "0.78rem", background: "none", border: "1px solid rgba(255,255,255,0.15)", borderRadius: "980px", padding: "0.45rem 1.1rem", color: "var(--text-secondary)", cursor: "pointer" }}>Выйти</button>
-                </>
+            <div className="hidden md:flex" style={{ alignItems: "center", gap: "12px", minWidth: 120, justifyContent: "flex-end" }}>
+              {!ready ? null : user ? (
+                <Link href="/account" className="btn-apple" style={{ fontSize: "0.78rem", padding: "0.45rem 1.1rem" }}>Кабинет</Link>
               ) : (
                 <>
                   <Link href="/auth/login" style={{ fontSize: "0.875rem", fontWeight: 500, color: "var(--accent)", textDecoration: "none" }}>Войти</Link>
@@ -114,11 +116,8 @@ export default function Navbar() {
             </Link>
           ))}
           <div style={{ display: "flex", gap: "10px", marginTop: "8px" }}>
-            {user ? (
-              <>
-                <Link href="/account" onClick={() => setOpen(false)} className="btn-apple" style={{ flex: 1, textAlign: "center", fontSize: "0.9rem" }}>Личный кабинет</Link>
-                <button onClick={handleLogout} style={{ flex: 1, textAlign: "center", fontSize: "0.9rem", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: "980px", color: "var(--text)", cursor: "pointer" }}>Выйти</button>
-              </>
+            {!ready ? null : user ? (
+              <Link href="/account" onClick={() => setOpen(false)} className="btn-apple" style={{ flex: 1, textAlign: "center", fontSize: "0.9rem" }}>Личный кабинет</Link>
             ) : (
               <>
                 <Link href="/auth/login" onClick={() => setOpen(false)} className="btn-apple-ghost" style={{ flex: 1, textAlign: "center", border: "1px solid rgba(255,255,255,0.15)", fontSize: "0.9rem" }}>Войти</Link>

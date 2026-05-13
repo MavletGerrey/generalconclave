@@ -3,7 +3,7 @@ import Footer from "../components/Footer";
 
 export default function AboutPage() {
   return (
-    <main style={{ background: "var(--bg)", minHeight: "100vh", overflowX: "hidden" }}>
+    <main style={{ background: "var(--bg)", minHeight: "100vh", overflowX: "hidden", display: "flex", flexDirection: "column" }}>
       <Navbar />
 
       <section style={{ position: "relative", padding: "100px 24px 120px", overflow: "hidden" }}>
@@ -56,6 +56,7 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
+      <div style={{ flex: 1 }} />
       <Footer />
     </main>
   );

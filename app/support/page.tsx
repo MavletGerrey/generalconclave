@@ -71,7 +71,7 @@ export default function SupportPage() {
   }
 
   return (
-    <main style={{ background: "var(--bg)", minHeight: "100vh", overflowX: "hidden" }}>
+    <main style={{ background: "var(--bg)", minHeight: "100vh", overflowX: "hidden", display: "flex", flexDirection: "column" }}>
       <Navbar />
 
       <section style={{ position: "relative", overflow: "hidden", padding: "80px 24px 120px" }}>
