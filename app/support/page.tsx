@@ -2,7 +2,7 @@
 
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 const inputStyle = {
@@ -14,7 +14,6 @@ const inputStyle = {
   color: "var(--text)",
   fontSize: "0.95rem",
   outline: "none",
-  transition: "border-color 0.2s",
 } as React.CSSProperties;
 
 const labelStyle = {
@@ -31,6 +30,20 @@ export default function SupportPage() {
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) {
+        setIsLoggedIn(true);
+        setEmail(data.user.email || "");
+        setName(data.user.user_metadata?.full_name || "");
+      }
+    });
+  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -48,7 +61,7 @@ export default function SupportPage() {
     });
 
     if (error) {
-      setError("Ошибка отправки. Напишите нам напрямую: General.Conclave.Industries@gmail.com");
+      setError("Ошибка отправки. Напишите напрямую: General.Conclave.Industries@gmail.com");
       setLoading(false);
       return;
     }
@@ -75,24 +88,27 @@ export default function SupportPage() {
 
           {sent ? (
             <div className="liquid-glass anim-3" style={{ padding: "56px 40px", textAlign: "center" }}>
-              <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>✓</div>
-              <h3 style={{ fontWeight: 700, fontSize: "1.2rem", letterSpacing: "-0.03em", marginBottom: "0.75rem" }}>
-                Заявка отправлена
-              </h3>
+              <div style={{ width: 56, height: 56, borderRadius: "50%", background: "rgba(48,209,88,0.15)", border: "1px solid rgba(48,209,88,0.3)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 1.5rem", fontSize: "1.5rem" }}>✓</div>
+              <h3 style={{ fontWeight: 700, fontSize: "1.2rem", letterSpacing: "-0.03em", marginBottom: "0.75rem" }}>Заявка отправлена</h3>
               <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", lineHeight: 1.7 }}>
                 Мы получили ваше сообщение и свяжемся с вами в ближайшее время.
               </p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="liquid-glass anim-4" style={{ padding: "40px" }}>
+              {isLoggedIn && (
+                <div style={{ background: "rgba(41,151,255,0.08)", border: "1px solid rgba(41,151,255,0.2)", borderRadius: "10px", padding: "10px 16px", marginBottom: "1.5rem", fontSize: "0.82rem", color: "var(--accent)" }}>
+                  Данные заполнены автоматически из вашего профиля
+                </div>
+              )}
               <div style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}>
                 <div>
                   <label style={labelStyle}>Имя</label>
-                  <input name="name" type="text" placeholder="Иван Иванов" required style={inputStyle} />
+                  <input name="name" type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Иван Иванов" required style={{ ...inputStyle, background: isLoggedIn ? "rgba(41,151,255,0.06)" : "rgba(255,255,255,0.06)" }} />
                 </div>
                 <div>
                   <label style={labelStyle}>Email</label>
-                  <input name="email" type="email" placeholder="your@email.com" required style={inputStyle} />
+                  <input name="email" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" required style={{ ...inputStyle, background: isLoggedIn ? "rgba(41,151,255,0.06)" : "rgba(255,255,255,0.06)" }} />
                 </div>
                 <div>
                   <label style={labelStyle}>Тема</label>
