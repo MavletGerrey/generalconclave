@@ -39,14 +39,14 @@ export default function TechPage() {
       <section style={{ padding: "0 24px 80px" }}>
         <div style={{ maxWidth: "1000px", margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "20px" }}>
           {services.map((s, i) => (
-            <FadeUp key={s.id} delay={i * 0.12} className="liquid-glass" style={{ padding: "40px" }}>
+            <FadeUp key={s.id} delay={i * 0.12} className="liquid-glass" style={{ padding: "40px", display: "flex", flexDirection: "column" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.5rem" }}>
                 <span style={{ fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: s.color }}>{s.tag}</span>
                 <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--text-secondary)" }}>{s.price}</span>
               </div>
               <div style={{ width: 40, height: 3, borderRadius: 2, background: s.color, marginBottom: "1.5rem", opacity: 0.7 }} />
               <h3 style={{ fontWeight: 700, fontSize: "1.3rem", letterSpacing: "-0.03em", marginBottom: "0.75rem" }}>{s.title}</h3>
-              <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", lineHeight: 1.7, marginBottom: "2rem" }}>{s.desc}</p>
+              <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", lineHeight: 1.7, marginBottom: "2rem", flex: 1 }}>{s.desc}</p>
               <Link href="/support" className="btn-apple-ghost" style={{ width: "100%", textAlign: "center", display: "block" }}>Оставить заявку</Link>
             </FadeUp>
           ))}
