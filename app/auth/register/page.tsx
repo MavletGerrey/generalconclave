@@ -84,7 +84,7 @@ export default function RegisterPage() {
           <form onSubmit={handleSubmit} className="liquid-glass anim-3" style={{ padding: "40px" }}>
             <div style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}>
               {[
-                { label: "Имя", name: "name", type: "text", placeholder: "Ваше имя" },
+                { label: "Username", name: "name", type: "text", placeholder: "your_username" },
                 { label: "Email", name: "email", type: "email", placeholder: "your@email.com" },
                 { label: "Пароль", name: "password", type: "password", placeholder: "Минимум 8 символов" },
               ].map((f) => (
