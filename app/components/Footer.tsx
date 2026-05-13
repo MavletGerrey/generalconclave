@@ -30,7 +30,7 @@ export default function Footer() {
               Telegram
             </a>
             <a
-              href="mailto:mavletgerreyllc@gmail.com"
+              href="mailto:General.Conclave.Industries@gmail.com"
               style={{
                 display: "inline-flex", alignItems: "center", gap: "7px",
                 background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)",
