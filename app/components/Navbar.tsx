@@ -3,13 +3,15 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState<{ email?: string } | null>(null);
   const [ready, setReady] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
+  const isAccount = pathname === "/account";
 
   useEffect(() => {
     const supabase = createClient();
@@ -64,9 +66,11 @@ export default function Navbar() {
           {/* Правая часть */}
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             {/* Десктоп кнопки */}
-            <div className="hidden md:flex" style={{ alignItems: "center", gap: "12px", minWidth: 120, justifyContent: "flex-end" }}>
+            <div className="hidden md:flex" style={{ alignItems: "center", gap: "12px", minWidth: 80, justifyContent: "flex-end" }}>
               {!ready ? null : user ? (
-                <Link href="/account" className="btn-apple-ghost" style={{ fontSize: "0.78rem", padding: "0.45rem 1.1rem", border: "1px solid rgba(255,255,255,0.15)" }}>Кабинет</Link>
+                !isAccount && (
+                  <Link href="/account" className="btn-apple-ghost" style={{ fontSize: "0.78rem", padding: "0.45rem 1.1rem", border: "1px solid rgba(255,255,255,0.15)" }}>Кабинет</Link>
+                )
               ) : (
                 <>
                   <Link href="/auth/login" style={{ fontSize: "0.875rem", fontWeight: 500, color: "var(--accent)", textDecoration: "none" }}>Войти</Link>
@@ -79,11 +83,30 @@ export default function Navbar() {
             <button
               onClick={() => setOpen(!open)}
               className="md:hidden"
-              style={{ background: "none", border: "none", cursor: "pointer", padding: "4px", color: "var(--text)", display: "flex", flexDirection: "column", gap: "5px", flexShrink: 0 }}
+              aria-label="Меню"
+              style={{
+                background: "rgba(255,255,255,0.06)",
+                border: "1px solid rgba(255,255,255,0.12)",
+                borderRadius: "10px",
+                cursor: "pointer",
+                width: 36, height: 36,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                flexShrink: 0, color: "var(--text)",
+                transition: "background 0.2s",
+              }}
             >
-              <span style={{ display: "block", width: 22, height: 2, background: "currentColor", borderRadius: 2, transition: "all 0.25s", transform: open ? "rotate(45deg) translateY(7px)" : "none" }} />
-              <span style={{ display: "block", width: 22, height: 2, background: "currentColor", borderRadius: 2, transition: "all 0.25s", opacity: open ? 0 : 1 }} />
-              <span style={{ display: "block", width: 22, height: 2, background: "currentColor", borderRadius: 2, transition: "all 0.25s", transform: open ? "rotate(-45deg) translateY(-7px)" : "none" }} />
+              {open ? (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <line x1="18" y1="6" x2="6" y2="18"/>
+                  <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              ) : (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <line x1="4" y1="7" x2="20" y2="7"/>
+                  <line x1="4" y1="12" x2="20" y2="12"/>
+                  <line x1="4" y1="17" x2="20" y2="17"/>
+                </svg>
+              )}
             </button>
           </div>
         </div>
