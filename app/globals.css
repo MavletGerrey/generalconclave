@@ -1,0 +1,263 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #000000;
+  --text: #f5f5f7;
+  --text-secondary: rgba(245,245,247,0.55);
+  --text-tertiary: rgba(245,245,247,0.3);
+  --accent: #2997ff;
+  --accent-green: #30d158;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "SF Pro Display", Inter, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ═══════════════════════════════════════
+   АНИМАЦИИ
+═══════════════════════════════════════ */
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-30px) scale(1.03); }
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px) translateX(0px); }
+  33% { transform: translateY(-20px) translateX(15px); }
+  66% { transform: translateY(10px) translateX(-10px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes border-glow {
+  0%, 100% { border-color: rgba(255,255,255,0.12); box-shadow: 0 0 0 0 rgba(41,151,255,0); }
+  50% { border-color: rgba(41,151,255,0.4); box-shadow: 0 0 30px rgba(41,151,255,0.15); }
+}
+
+/* ═══════════════════════════════════════
+   ТЕКСТ
+═══════════════════════════════════════ */
+
+.gradient-text {
+  background: linear-gradient(160deg, #fff 30%, rgba(255,255,255,0.4) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-blue {
+  background: linear-gradient(135deg, #2997ff 0%, #30d158 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.shimmer-text {
+  background: linear-gradient(90deg, rgba(255,255,255,0.4) 0%, #fff 30%, rgba(255,255,255,0.4) 60%, #fff 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s linear infinite;
+}
+
+/* ═══════════════════════════════════════
+   ЖИДКОЕ СТЕКЛО — настоящее Apple Vision Pro
+═══════════════════════════════════════ */
+
+.liquid-glass {
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,0.1) 0%,
+    rgba(255,255,255,0.04) 50%,
+    rgba(255,255,255,0.07) 100%
+  );
+  border: 1px solid rgba(255,255,255,0.15);
+  border-top-color: rgba(255,255,255,0.3);
+  border-radius: 22px;
+  backdrop-filter: blur(40px) saturate(180%) brightness(1.05);
+  -webkit-backdrop-filter: blur(40px) saturate(180%) brightness(1.05);
+  box-shadow:
+    0 8px 32px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.18),
+    inset 0 -1px 0 rgba(255,255,255,0.04),
+    inset 1px 0 0 rgba(255,255,255,0.08);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+  overflow: hidden;
+}
+
+.liquid-glass::before {
+  content: "";
+  position: absolute;
+  top: 0; left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+  transition: left 0.6s ease;
+}
+
+.liquid-glass:hover::before {
+  left: 150%;
+}
+
+.liquid-glass:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,0.14) 0%,
+    rgba(255,255,255,0.06) 50%,
+    rgba(255,255,255,0.1) 100%
+  );
+  border-color: rgba(255,255,255,0.25);
+  border-top-color: rgba(255,255,255,0.45);
+  box-shadow:
+    0 24px 60px rgba(0,0,0,0.6),
+    0 0 0 1px rgba(255,255,255,0.1),
+    inset 0 1px 0 rgba(255,255,255,0.25),
+    inset 0 -1px 0 rgba(255,255,255,0.06);
+  transform: translateY(-8px) scale(1.01);
+}
+
+.liquid-glass-dark {
+  background: linear-gradient(
+    160deg,
+    rgba(255,255,255,0.06) 0%,
+    rgba(255,255,255,0.02) 100%
+  );
+  border: 1px solid rgba(255,255,255,0.1);
+  border-top-color: rgba(255,255,255,0.18);
+  border-radius: 28px;
+  backdrop-filter: blur(60px) saturate(200%);
+  -webkit-backdrop-filter: blur(60px) saturate(200%);
+  box-shadow:
+    0 4px 24px rgba(0,0,0,0.4),
+    inset 0 1px 0 rgba(255,255,255,0.12);
+}
+
+/* ═══════════════════════════════════════
+   НАВБАР
+═══════════════════════════════════════ */
+
+.navbar-glass {
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: saturate(200%) blur(30px);
+  -webkit-backdrop-filter: saturate(200%) blur(30px);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  animation: fade-in 0.5s ease forwards;
+}
+
+/* ═══════════════════════════════════════
+   КНОПКИ
+═══════════════════════════════════════ */
+
+.btn-apple {
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 500;
+  padding: 0.75rem 1.8rem;
+  border-radius: 980px;
+  border: none;
+  transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  display: inline-block;
+  cursor: pointer;
+  letter-spacing: -0.01em;
+  box-shadow: 0 4px 20px rgba(41,151,255,0.3);
+}
+
+.btn-apple:hover {
+  background: #1a8fe3;
+  transform: scale(1.04);
+  box-shadow: 0 8px 35px rgba(41,151,255,0.5);
+}
+
+.btn-apple:active {
+  transform: scale(0.97);
+}
+
+.btn-apple-ghost {
+  background: rgba(255,255,255,0.08);
+  color: var(--text);
+  font-size: 0.88rem;
+  font-weight: 500;
+  padding: 0.75rem 1.8rem;
+  border-radius: 980px;
+  border: 1px solid rgba(255,255,255,0.15);
+  backdrop-filter: blur(20px);
+  transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  display: inline-block;
+  cursor: pointer;
+  letter-spacing: -0.01em;
+}
+
+.btn-apple-ghost:hover {
+  background: rgba(255,255,255,0.14);
+  border-color: rgba(255,255,255,0.3);
+  transform: scale(1.04);
+}
+
+/* ═══════════════════════════════════════
+   FADE-UP АНИМАЦИИ ПРИ ЗАГРУЗКЕ
+═══════════════════════════════════════ */
+
+.anim-1 { animation: fade-up 0.7s ease 0.1s both; }
+.anim-2 { animation: fade-up 0.7s ease 0.25s both; }
+.anim-3 { animation: fade-up 0.7s ease 0.4s both; }
+.anim-4 { animation: fade-up 0.7s ease 0.55s both; }
+.anim-5 { animation: fade-up 0.7s ease 0.7s both; }
+/* Универсальный — delay задаётся через inline style */
+.anim { animation: fade-up 0.65s ease both; }
+
+/* ═══════════════════════════════════════
+   ТЕГИ И ПРОЧЕЕ
+═══════════════════════════════════════ */
+
+.apple-tag {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.apple-divider {
+  border: none;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
