@@ -66,7 +66,7 @@ export default function Navbar() {
             {/* Десктоп кнопки */}
             <div className="hidden md:flex" style={{ alignItems: "center", gap: "12px", minWidth: 120, justifyContent: "flex-end" }}>
               {!ready ? null : user ? (
-                <Link href="/account" className="btn-apple" style={{ fontSize: "0.78rem", padding: "0.45rem 1.1rem" }}>Кабинет</Link>
+                <Link href="/account" className="btn-apple-ghost" style={{ fontSize: "0.78rem", padding: "0.45rem 1.1rem", border: "1px solid rgba(255,255,255,0.15)" }}>Кабинет</Link>
               ) : (
                 <>
                   <Link href="/auth/login" style={{ fontSize: "0.875rem", fontWeight: 500, color: "var(--accent)", textDecoration: "none" }}>Войти</Link>
