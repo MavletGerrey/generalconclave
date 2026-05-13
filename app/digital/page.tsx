@@ -1,31 +1,31 @@
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import FadeUp from "../components/FadeUp";
-import Link from "next/link";
+import BuyButton from "../components/BuyButton";
 
 const products = [
   {
     id: 1, title: "Промт-пак для ChatGPT",
     desc: "50 проверенных промтов для бизнеса, копирайтинга и маркетинга.",
-    price: "490 ₽", tag: "Промты", color: "#2997ff", bg: ["#0a2540", "#0071e3"],
+    price: 490, tag: "Промты", color: "#2997ff", bg: ["#0a2540", "#0071e3"],
     icon: "ChatGPT", count: "50", unit: "промтов",
   },
   {
     id: 2, title: "SEO-промты для контента",
     desc: "Шаблоны для написания SEO-статей с нуля через нейросеть.",
-    price: "390 ₽", tag: "Промты", color: "#30d158", bg: ["#0a2e1a", "#25a244"],
+    price: 390, tag: "Промты", color: "#30d158", bg: ["#0a2e1a", "#25a244"],
     icon: "SEO", count: "30", unit: "шаблонов",
   },
   {
     id: 3, title: "AI-ассистент для продаж",
     desc: "Готовый набор скриптов и промтов для отдела продаж.",
-    price: "790 ₽", tag: "Продукт", color: "#bf5af2", bg: ["#1a0a2e", "#9b30d9"],
+    price: 790, tag: "Продукт", color: "#bf5af2", bg: ["#1a0a2e", "#9b30d9"],
     icon: "AI", count: "40", unit: "скриптов",
   },
   {
     id: 4, title: "Промты для Midjourney",
     desc: "100 визуальных промтов для генерации профессиональных изображений.",
-    price: "590 ₽", tag: "Промты", color: "#ff9f0a", bg: ["#2e1a00", "#c97300"],
+    price: 590, tag: "Промты", color: "#ff9f0a", bg: ["#2e1a00", "#c97300"],
     icon: "MJ", count: "100", unit: "промтов",
   },
 ];
@@ -91,11 +91,11 @@ export default function DigitalPage() {
               <div style={{ padding: "24px 28px 28px", display: "flex", flexDirection: "column", flex: 1 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
                   <span style={{ fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: p.color }}>{p.tag}</span>
-                  <span style={{ fontWeight: 700, fontSize: "1.05rem" }}>{p.price}</span>
+                  <span style={{ fontWeight: 700, fontSize: "1.05rem" }}>{p.price} ₽</span>
                 </div>
                 <h3 style={{ fontWeight: 700, fontSize: "1.1rem", letterSpacing: "-0.03em", marginBottom: "0.5rem" }}>{p.title}</h3>
                 <p style={{ color: "var(--text-secondary)", fontSize: "0.88rem", lineHeight: 1.7, marginBottom: "1.5rem", flex: 1 }}>{p.desc}</p>
-                <Link href="/auth/register" className="btn-apple" style={{ width: "100%", textAlign: "center", display: "block" }}>Купить</Link>
+                <BuyButton productId={p.id} title={p.title} price={p.price} />
               </div>
             </FadeUp>
           ))}
