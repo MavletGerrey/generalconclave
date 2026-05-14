@@ -114,39 +114,34 @@ export default function Navbar() {
 
       {/* Мобильное меню */}
       {open && (
-        <div style={{
-          position: "fixed", top: 48, left: 0, right: 0, zIndex: 99,
-          background: "rgba(0,0,0,0.95)", backdropFilter: "blur(30px)",
-          borderBottom: "1px solid rgba(255,255,255,0.08)",
-          padding: "16px 24px 24px",
-          display: "flex", flexDirection: "column", gap: "8px",
-          animation: "fade-up 0.2s ease both",
-        }}>
-          {[
-            ["/digital", "Digital"],
-            ["/tech", "Tech"],
-            ["/about", "О нас"],
-            ["/support", "Поддержка"],
-          ].map(([href, label]) => (
-            <Link key={href} href={href} onClick={() => setOpen(false)} style={{
-              padding: "14px 16px", borderRadius: "12px",
-              background: "rgba(255,255,255,0.04)",
-              border: "1px solid rgba(255,255,255,0.07)",
-              color: "var(--text)", textDecoration: "none",
-              fontSize: "1rem", fontWeight: 500,
-            }}>
-              {label}
-            </Link>
-          ))}
-          <div style={{ display: "flex", gap: "10px", marginTop: "8px" }}>
-            {!ready ? null : user ? (
-              <Link href="/account" onClick={() => setOpen(false)} className="btn-apple" style={{ flex: 1, textAlign: "center", fontSize: "0.9rem" }}>Личный кабинет</Link>
-            ) : (
-              <>
-                <Link href="/auth/login" onClick={() => setOpen(false)} className="btn-apple-ghost" style={{ flex: 1, textAlign: "center", border: "1px solid rgba(255,255,255,0.15)", fontSize: "0.9rem" }}>Войти</Link>
-                <Link href="/auth/register" onClick={() => setOpen(false)} className="btn-apple" style={{ flex: 1, textAlign: "center", fontSize: "0.9rem" }}>Начать</Link>
-              </>
-            )}
+        <div
+          onClick={() => setOpen(false)}
+          style={{ position: "fixed", inset: 0, zIndex: 99, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(6px)", display: "flex", justifyContent: "center", alignItems: "flex-start", paddingTop: "56px", paddingLeft: "16px", paddingRight: "16px" }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{ width: "100%", maxWidth: "340px", background: "rgba(16,16,16,0.97)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "20px", backdropFilter: "blur(40px)", padding: "12px", display: "flex", flexDirection: "column", gap: "6px", animation: "fade-up 0.2s ease both", boxShadow: "0 24px 60px rgba(0,0,0,0.5)" }}
+          >
+            {[
+              ["/digital", "Digital"],
+              ["/tech", "Tech"],
+              ["/about", "О нас"],
+              ["/support", "Поддержка"],
+            ].map(([href, label]) => (
+              <Link key={href} href={href} onClick={() => setOpen(false)} style={{ padding: "13px 16px", borderRadius: "12px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)", color: "var(--text)", textDecoration: "none", fontSize: "0.95rem", fontWeight: 500 }}>
+                {label}
+              </Link>
+            ))}
+            <div style={{ display: "flex", gap: "8px", marginTop: "4px" }}>
+              {!ready ? null : user ? (
+                <Link href="/account" onClick={() => setOpen(false)} className="btn-apple" style={{ flex: 1, textAlign: "center", fontSize: "0.88rem" }}>Личный кабинет</Link>
+              ) : (
+                <>
+                  <Link href="/auth/login" onClick={() => setOpen(false)} className="btn-apple-ghost" style={{ flex: 1, textAlign: "center", border: "1px solid rgba(255,255,255,0.15)", fontSize: "0.88rem" }}>Войти</Link>
+                  <Link href="/auth/register" onClick={() => setOpen(false)} className="btn-apple" style={{ flex: 1, textAlign: "center", fontSize: "0.88rem" }}>Начать</Link>
+                </>
+              )}
+            </div>
           </div>
         </div>
       )}
