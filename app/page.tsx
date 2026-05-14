@@ -37,19 +37,24 @@ export default function Home() {
             <span style={{ fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.06em", color: "var(--accent)", textTransform: "uppercase" }}>General Conclave Industries</span>
           </div>
 
-          <h1 className="anim-2" style={{ fontSize: "clamp(3.2rem, 9.5vw, 7.5rem)", fontWeight: 700, letterSpacing: "-0.05em", lineHeight: 1.0, marginBottom: "1.5rem" }}>
-            <span className="gradient-text">Технологии.</span><br />
-            <span className="shimmer-text">Продукты.</span><br />
-            <span className="gradient-text-blue">Результат.</span>
+          <h1 className="anim-2 gradient-text" style={{ fontSize: "clamp(2.4rem, 6.5vw, 5.5rem)", fontWeight: 700, letterSpacing: "-0.04em", lineHeight: 1.08, marginBottom: "1.2rem" }}>
+            Внедряем AI в ваш бизнес —<br />
+            автоматизируем рутину,<br />
+            <span className="gradient-text-blue">увеличиваем выручку</span>
           </h1>
 
-          <p className="anim-3" style={{ fontSize: "1.2rem", color: "var(--text-secondary)", maxWidth: "500px", margin: "0 auto 2.5rem", lineHeight: 1.75, letterSpacing: "-0.01em" }}>
-            Готовые AI-инструменты и разработка под ключ — всё что нужно для вашего бизнеса.
+          <p className="anim-3" style={{ fontSize: "1.1rem", color: "var(--text-secondary)", maxWidth: "520px", margin: "0 auto 0.75rem", lineHeight: 1.7 }}>
+            Для салонов, клиник, юристов и малого бизнеса.<br />
+            <strong style={{ color: "var(--text)" }}>Первый результат за 7 дней.</strong>
+          </p>
+
+          <p className="anim-3" style={{ fontSize: "0.95rem", color: "var(--text-tertiary)", maxWidth: "480px", margin: "0 auto 2.5rem", lineHeight: 1.7 }}>
+            Берём на себя всю техническую часть — вы получаете работающее решение и экономите десятки часов в месяц.
           </p>
 
           <div className="anim-4" style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}>
-            <Link href="/digital" className="btn-apple" style={{ fontSize: "1rem", padding: "0.9rem 2.2rem" }}>Смотреть продукты</Link>
-            <Link href="/tech" className="btn-apple-ghost" style={{ fontSize: "1rem", padding: "0.9rem 2.2rem" }}>Заказать разработку</Link>
+            <Link href="/tech" className="btn-apple" style={{ fontSize: "1rem", padding: "0.9rem 2.2rem" }}>Внедрить AI в бизнес</Link>
+            <Link href="/digital" className="btn-apple-ghost" style={{ fontSize: "1rem", padding: "0.9rem 2.2rem" }}>Готовые продукты</Link>
           </div>
         </div>
       </section>
@@ -64,10 +69,10 @@ export default function Home() {
             </div>
             <p className="apple-tag" style={{ marginBottom: "0.75rem" }}>Conclave Digital</p>
             <h2 className="gradient-text" style={{ fontSize: "1.9rem", fontWeight: 700, letterSpacing: "-0.04em", lineHeight: 1.1, marginBottom: "1rem" }}>
-              Цифровые<br />продукты
+              Готовые<br />инструменты
             </h2>
             <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", lineHeight: 1.75, marginBottom: "2rem" }}>
-              Шаблоны промтов, AI-инструменты и IT-продукты. Мгновенное скачивание после оплаты.
+              Шаблоны промтов, AI-скрипты и цифровые продукты — скачайте и применяйте сразу.
             </p>
             <span style={{ color: "var(--accent)", fontSize: "0.9rem", fontWeight: 500 }}>Открыть каталог →</span>
           </Link>
@@ -78,12 +83,15 @@ export default function Home() {
             </div>
             <p className="apple-tag" style={{ marginBottom: "0.75rem", color: "var(--accent-green)" }}>Conclave Tech</p>
             <h2 className="gradient-text" style={{ fontSize: "1.9rem", fontWeight: 700, letterSpacing: "-0.04em", lineHeight: 1.1, marginBottom: "1rem" }}>
-              Разработка<br />под ключ
+              AI-автоматизация<br />под ключ
             </h2>
-            <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", lineHeight: 1.75, marginBottom: "2rem" }}>
-              Сайты, приложения, Telegram-боты и AI-решения. Оставьте заявку — обсудим детали.
+            <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", lineHeight: 1.75, marginBottom: "0.75rem" }}>
+              Внедряем AI в ваш бизнес: боты, автоответы, обработка заявок — без участия с вашей стороны.
             </p>
-            <span style={{ color: "var(--accent-green)", fontSize: "0.9rem", fontWeight: 500 }}>Оставить заявку →</span>
+            <p style={{ color: "var(--accent-green)", fontSize: "0.85rem", marginBottom: "2rem", fontWeight: 500 }}>
+              Первый результат за 7 дней
+            </p>
+            <span style={{ color: "var(--accent-green)", fontSize: "0.9rem", fontWeight: 500 }}>Обсудить проект →</span>
           </Link>
         </div>
       </section>

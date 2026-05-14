@@ -16,9 +16,21 @@ export default function AboutPage() {
           </h1>
 
           <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+
+            {/* Личный блок */}
+            <div className="liquid-glass anim-3" style={{ padding: "36px 40px", display: "flex", gap: "24px", alignItems: "flex-start" }}>
+              <div style={{ width: 56, height: 56, borderRadius: "50%", background: "linear-gradient(135deg, #2997ff, #0071e3)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: "1.3rem", color: "#fff", flexShrink: 0, boxShadow: "0 8px 24px rgba(41,151,255,0.35)" }}>А</div>
+              <div>
+                <p style={{ fontWeight: 600, fontSize: "1rem", marginBottom: "0.5rem" }}>Абдулгамид Салихов</p>
+                <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", lineHeight: 1.8 }}>
+                  Разработчик и основатель General Conclave Industries. Помогаю малому бизнесу убирать ручную работу через AI и автоматизацию. Работаю лично с каждым клиентом — без посредников.
+                </p>
+              </div>
+            </div>
+
             <div className="liquid-glass anim-3" style={{ padding: "36px 40px" }}>
               <p style={{ color: "var(--text-secondary)", fontSize: "1rem", lineHeight: 1.8 }}>
-                General Conclave Industries — компания в сфере цифровых продуктов и IT-разработки. Мы создаём инструменты, которые экономят время и помогают бизнесу расти.
+                General Conclave Industries — компания по внедрению AI-автоматизаций для малого бизнеса. Помогаем салонам, клиникам, юристам и другим предпринимателям убирать рутину и сосредоточиться на главном.
               </p>
             </div>
 
@@ -26,13 +38,13 @@ export default function AboutPage() {
               <div className="liquid-glass anim-4" style={{ padding: "36px 40px" }}>
                 <p className="apple-tag" style={{ marginBottom: "1rem" }}>Conclave Digital</p>
                 <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", lineHeight: 1.75 }}>
-                  Готовые цифровые продукты: шаблоны промтов, AI-инструменты и IT-решения. Скачайте и применяйте сразу.
+                  Готовые AI-инструменты и шаблоны промтов — скачайте и применяйте сразу без настройки.
                 </p>
               </div>
               <div className="liquid-glass anim-4" style={{ padding: "36px 40px" }}>
                 <p className="apple-tag" style={{ marginBottom: "1rem", color: "var(--accent-green)" }}>Conclave Tech</p>
                 <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", lineHeight: 1.75 }}>
-                  Разработка под заказ: сайты, Telegram-боты, AI-интеграции. Работаем прозрачно — от заявки до результата.
+                  AI-интеграции и Telegram-боты под ключ. Первый результат за 7 дней. Поддержка включена.
                 </p>
               </div>
             </div>
@@ -42,7 +54,7 @@ export default function AboutPage() {
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
                 {[
                   ["Организация", "ИП Салихов Абдулгамид Маратович"],
-                  ["Сайт", "generalconclave.net"],
+                  ["Сайт", "generalconclave.netlify.app"],
                   ["ИНН", "057205884027"],
                   ["ОГРНИП", "325050000029648"],
                 ].map(([k, v]) => (
