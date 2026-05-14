@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
 
 interface Props {
   service?: string;
@@ -34,20 +35,18 @@ export default function RequestModal({ service, onClose }: Props) {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [sent, setSent] = useState(false);
+  const [done, setDone] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const router = useRouter();
 
-  // Подставляем данные если залогинен
   useEffect(() => {
     createClient().auth.getUser().then(({ data }) => {
       if (data.user) {
+        setIsLoggedIn(true);
         setEmail(data.user.email || "");
         setName(data.user.user_metadata?.full_name || "");
       }
     });
-  }, []);
-
-  // Закрытие по Escape
-  useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
@@ -57,33 +56,54 @@ export default function RequestModal({ service, onClose }: Props) {
     e.preventDefault();
     setLoading(true);
     const supabase = createClient();
-    await supabase.from("requests").insert({
-      name, email,
-      subject: service || "Заявка на разработку",
-      message,
-    });
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (user) {
+      // Залогинен — создаём тикет с первым сообщением
+      const { data: ticket } = await supabase
+        .from("tickets")
+        .insert({ user_id: user.id, service: service || "Общий вопрос" })
+        .select()
+        .single();
+
+      if (ticket) {
+        await supabase.from("messages").insert({
+          ticket_id: ticket.id,
+          sender: "client",
+          content: message,
+        });
+      }
+    } else {
+      // Не залогинен — сохраняем в requests
+      await supabase.from("requests").insert({ name, email, subject: service || "Заявка", message });
+    }
+
     setLoading(false);
-    setSent(true);
+    setDone(true);
   }
 
   return (
-    <div
-      onClick={onClose}
-      style={{ position: "fixed", inset: 0, zIndex: 500, display: "flex", alignItems: "center", justifyContent: "center", padding: "24px", background: "rgba(0,0,0,0.75)", backdropFilter: "blur(12px)" }}
-    >
-      <div
-        onClick={e => e.stopPropagation()}
-        className="liquid-glass"
-        style={{ width: "100%", maxWidth: "480px", padding: "40px", animation: "fade-up 0.25s ease both" }}
-      >
-        {sent ? (
+    <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 500, display: "flex", alignItems: "center", justifyContent: "center", padding: "24px", background: "rgba(0,0,0,0.75)", backdropFilter: "blur(12px)" }}>
+      <div onClick={e => e.stopPropagation()} className="liquid-glass" style={{ width: "100%", maxWidth: "480px", padding: "40px", animation: "fade-up 0.25s ease both" }}>
+        {done ? (
           <div style={{ textAlign: "center", padding: "16px 0" }}>
             <div style={{ width: 56, height: 56, borderRadius: "50%", background: "rgba(48,209,88,0.15)", border: "1px solid rgba(48,209,88,0.3)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 1.2rem", fontSize: "1.5rem" }}>✓</div>
             <h3 style={{ fontWeight: 700, fontSize: "1.1rem", letterSpacing: "-0.03em", marginBottom: "0.5rem" }}>Заявка отправлена</h3>
             <p style={{ color: "var(--text-secondary)", fontSize: "0.88rem", lineHeight: 1.7, marginBottom: "1.5rem" }}>
-              Менеджер свяжется с вами в ближайшее время.
+              {isLoggedIn
+                ? "Чат с менеджером открыт в вашем личном кабинете."
+                : "Менеджер свяжется с вами в ближайшее время."}
             </p>
-            <button onClick={onClose} className="btn-apple" style={{ border: "none", cursor: "pointer" }}>Закрыть</button>
+            <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
+              {isLoggedIn && (
+                <button onClick={() => { onClose(); router.push("/account"); }} className="btn-apple" style={{ border: "none", cursor: "pointer" }}>
+                  Открыть чат
+                </button>
+              )}
+              <button onClick={onClose} className="btn-apple-ghost" style={{ border: "1px solid rgba(255,255,255,0.15)", cursor: "pointer" }}>
+                Закрыть
+              </button>
+            </div>
           </div>
         ) : (
           <>
@@ -95,21 +115,30 @@ export default function RequestModal({ service, onClose }: Props) {
               <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-tertiary)", fontSize: "1.2rem", lineHeight: 1, padding: "4px" }}>✕</button>
             </div>
 
+            {isLoggedIn && (
+              <div style={{ background: "rgba(41,151,255,0.08)", border: "1px solid rgba(41,151,255,0.2)", borderRadius: "10px", padding: "10px 16px", marginBottom: "1.2rem", fontSize: "0.82rem", color: "var(--accent)" }}>
+                После отправки откроется чат с менеджером в личном кабинете
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-              <div>
-                <label style={labelStyle}>Имя</label>
-                <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Ваше имя" required style={inputStyle} />
-              </div>
-              <div>
-                <label style={labelStyle}>Email</label>
-                <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" required style={inputStyle} />
-              </div>
+              {!isLoggedIn && (
+                <>
+                  <div>
+                    <label style={labelStyle}>Имя</label>
+                    <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Ваше имя" required style={inputStyle} />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Email</label>
+                    <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" required style={inputStyle} />
+                  </div>
+                </>
+              )}
               <div>
                 <label style={labelStyle}>Сообщение</label>
                 <textarea value={message} onChange={e => setMessage(e.target.value)} rows={4} placeholder="Опишите ваш проект или вопрос..." required style={{ ...inputStyle, resize: "none" }} />
               </div>
-              <button type="submit" disabled={loading} className="btn-apple"
-                style={{ border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1, marginTop: "4px" }}>
+              <button type="submit" disabled={loading} className="btn-apple" style={{ border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1, marginTop: "4px" }}>
                 {loading ? "Отправляем..." : "Отправить заявку"}
               </button>
             </form>
