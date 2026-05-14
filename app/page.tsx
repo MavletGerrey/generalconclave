@@ -37,7 +37,7 @@ export default function Home() {
             <span style={{ fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.06em", color: "var(--accent)", textTransform: "uppercase" }}>General Conclave Industries</span>
           </div>
 
-          <h1 className="anim-2" style={{ fontSize: "clamp(3.2rem, 9.5vw, 7.5rem)", fontWeight: 700, letterSpacing: "-0.05em", lineHeight: 1.0, marginBottom: "1.5rem" }}>
+          <h1 className="anim-2" style={{ fontSize: "clamp(2rem, 5.5vw, 4.8rem)", fontWeight: 700, letterSpacing: "-0.04em", lineHeight: 1.1, marginBottom: "1.5rem" }}>
             <span className="gradient-text">Автоматизируем бизнес.</span><br />
             <span className="shimmer-text">Убираем рутину.</span><br />
             <span className="gradient-text-blue">Увеличиваем выручку.</span>
