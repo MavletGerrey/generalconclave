@@ -27,6 +27,9 @@ jobs:
           NEXT_PUBLIC_TINKOFF_TERMINAL: ${{ secrets.NEXT_PUBLIC_TINKOFF_TERMINAL }}
           TINKOFF_SECRET: ${{ secrets.TINKOFF_SECRET }}
 
+      - name: Prepare assets with worker
+        run: cp .open-next/worker.js .open-next/assets/_worker.js
+
       - name: Deploy to Cloudflare Pages
         run: npx wrangler pages deploy .open-next/assets --project-name=generalconclave --branch=main
         env:
