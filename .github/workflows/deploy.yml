@@ -18,9 +18,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
-        run: npm run build
+      - name: Build Next.js
+        run: npx next build
         env:
+          NODE_OPTIONS: '--max-old-space-size=4096'
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_TINKOFF_TERMINAL: ${{ secrets.NEXT_PUBLIC_TINKOFF_TERMINAL }}
+          TINKOFF_SECRET: ${{ secrets.TINKOFF_SECRET }}
+
+      - name: Package for Cloudflare
+        run: npx @opennextjs/cloudflare build
+        env:
+          NODE_OPTIONS: '--max-old-space-size=4096'
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
           NEXT_PUBLIC_TINKOFF_TERMINAL: ${{ secrets.NEXT_PUBLIC_TINKOFF_TERMINAL }}
