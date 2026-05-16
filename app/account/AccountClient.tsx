@@ -105,6 +105,11 @@ export default function AccountClient({ user }: { user: User }) {
               </h1>
               <p style={{ color: "var(--text-tertiary)", fontSize: "0.85rem" }}>{user.email}</p>
             </div>
+            {user.email === "mavletgerreyllc@gmail.com" && (
+              <Link href="/admin" style={{ background: "rgba(255,59,48,0.12)", border: "1px solid rgba(255,59,48,0.3)", borderRadius: "10px", padding: "8px 16px", color: "#ff3b30", fontSize: "0.82rem", textDecoration: "none", fontWeight: 600 }}>
+                Админ
+              </Link>
+            )}
             <button onClick={async () => { await createClient().auth.signOut(); router.push("/"); router.refresh(); }}
               style={{ background: "none", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "10px", padding: "8px 16px", color: "var(--text-tertiary)", fontSize: "0.82rem", cursor: "pointer" }}>
               Выйти
