@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
 
 interface Props {
   productId: number;
@@ -10,19 +12,19 @@ interface Props {
 
 export default function BuyButton({ productId, title, price }: Props) {
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   async function handleBuy() {
     setLoading(true);
     try {
-      const orderId = `${productId}-${Date.now()}`;
+      const { data: { user } } = await createClient().auth.getUser();
+      if (!user) { router.push("/auth/login"); return; }
+
+      const orderId = `${productId}_${user.id}_${Date.now()}`;
       const res = await fetch("/api/payment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          amount: price,
-          orderId,
-          description: title,
-        }),
+        body: JSON.stringify({ amount: price, orderId, description: title, email: user.email }),
       });
 
       const data = await res.json();
@@ -39,18 +41,8 @@ export default function BuyButton({ productId, title, price }: Props) {
   }
 
   return (
-    <button
-      onClick={handleBuy}
-      disabled={loading}
-      className="btn-apple"
-      style={{
-        width: "100%",
-        textAlign: "center",
-        border: "none",
-        cursor: loading ? "not-allowed" : "pointer",
-        opacity: loading ? 0.7 : 1,
-      }}
-    >
+    <button onClick={handleBuy} disabled={loading} className="btn-apple"
+      style={{ width: "100%", textAlign: "center", border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}>
       {loading ? "Переход к оплате..." : `Купить — ${price} ₽`}
     </button>
   );

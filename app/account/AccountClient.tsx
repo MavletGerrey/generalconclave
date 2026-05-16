@@ -31,6 +31,7 @@ const labelStyle = {
 } as React.CSSProperties;
 
 type Ticket = { id: string; service: string; status: string; created_at: string };
+type Purchase = { id: string; product_id: number; created_at: string; products: { title: string; file_path: string | null; image_url: string | null; price: number } };
 
 export default function AccountClient({ user }: { user: User }) {
   const router = useRouter();
@@ -43,11 +44,15 @@ export default function AccountClient({ user }: { user: User }) {
   const [passwordMsg, setPasswordMsg] = useState<{ type: "ok" | "err"; text: string } | null>(null);
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [activeTicket, setActiveTicket] = useState<Ticket | null>(null);
+  const [purchases, setPurchases] = useState<Purchase[]>([]);
 
   useEffect(() => {
     const supabase = createClient();
     supabase.from("tickets").select("*").order("created_at", { ascending: false }).then(({ data }) => {
       setTickets(data ?? []);
+    });
+    supabase.from("purchases").select("*, products(title, file_path, image_url, price)").order("created_at", { ascending: false }).then(({ data }) => {
+      setPurchases((data as Purchase[]) ?? []);
     });
   }, []);
 
@@ -130,10 +135,35 @@ export default function AccountClient({ user }: { user: User }) {
                 <h2 style={{ fontWeight: 600, fontSize: "1rem", letterSpacing: "-0.02em" }}>Мои покупки</h2>
                 <Link href="/digital" style={{ fontSize: "0.82rem", color: "var(--accent)", textDecoration: "none" }}>Каталог →</Link>
               </div>
-              <div style={{ padding: "48px 28px", textAlign: "center" }}>
-                <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginBottom: "8px" }}>Покупок пока нет</p>
-                <p style={{ color: "var(--text-tertiary)", fontSize: "0.8rem" }}>После оплаты файлы появятся здесь</p>
-              </div>
+              {purchases.length === 0 ? (
+                <div style={{ padding: "48px 28px", textAlign: "center" }}>
+                  <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginBottom: "8px" }}>Покупок пока нет</p>
+                  <p style={{ color: "var(--text-tertiary)", fontSize: "0.8rem" }}>После оплаты файлы появятся здесь</p>
+                </div>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  {purchases.map(p => (
+                    <div key={p.id} style={{ padding: "16px 28px", display: "flex", alignItems: "center", gap: 16, borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                      {p.products?.image_url ? (
+                        <img src={p.products.image_url} alt="" style={{ width: 48, height: 48, borderRadius: 10, objectFit: "cover", flexShrink: 0 }} />
+                      ) : (
+                        <div style={{ width: 48, height: 48, borderRadius: 10, background: "rgba(41,151,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: "1.2rem" }}>📄</div>
+                      )}
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ fontWeight: 600, fontSize: "0.9rem", marginBottom: 2 }}>{p.products?.title}</p>
+                        <p style={{ fontSize: "0.75rem", color: "var(--text-tertiary)" }}>{new Date(p.created_at).toLocaleDateString("ru-RU")} · {p.products?.price} ₽</p>
+                      </div>
+                      {p.products?.file_path ? (
+                        <a href={`/api/download?productId=${p.product_id}`} className="btn-apple" style={{ textDecoration: "none", fontSize: "0.78rem", border: "none", flexShrink: 0 }}>
+                          Скачать
+                        </a>
+                      ) : (
+                        <span style={{ fontSize: "0.75rem", color: "var(--text-tertiary)" }}>Файл скоро</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 

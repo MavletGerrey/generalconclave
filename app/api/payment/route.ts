@@ -27,8 +27,9 @@ export async function POST(req: NextRequest) {
     OrderId: orderId,
     Description: description,
     Email: email || "",
-    SuccessURL: "https://generalconclave.netlify.app/account",
-    FailURL: "https://generalconclave.netlify.app/digital",
+    SuccessURL: `https://generalconclave.general-conclave-industries.workers.dev/payment/success?OrderId=${orderId}`,
+    FailURL: "https://generalconclave.general-conclave-industries.workers.dev/digital",
+    NotificationURL: "https://generalconclave.general-conclave-industries.workers.dev/api/payment/callback",
   };
 
   params.Token = generateToken(params, password);

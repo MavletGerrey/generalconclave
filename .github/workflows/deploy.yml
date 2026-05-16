@@ -27,6 +27,15 @@ jobs:
           NEXT_PUBLIC_TINKOFF_TERMINAL: ${{ secrets.NEXT_PUBLIC_TINKOFF_TERMINAL }}
           TINKOFF_SECRET: ${{ secrets.TINKOFF_SECRET }}
 
+      - name: Set Cloudflare Worker secrets
+        run: |
+          echo "${{ secrets.TINKOFF_SECRET }}" | npx wrangler secret put TINKOFF_SECRET
+          echo "${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" | npx wrangler secret put SUPABASE_SERVICE_ROLE_KEY
+          echo "${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}" | npx wrangler secret put NEXT_PUBLIC_SUPABASE_URL
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: 7d06ee9e03b52d096ed1a09b6bb7d9f2
+
       - name: Deploy to Cloudflare Workers
         run: npx wrangler deploy
         env:
