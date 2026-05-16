@@ -43,6 +43,8 @@ export default function AdminClient({ tickets, requests, products: init }: {
   const [activeTicket, setActiveTicket] = useState<Ticket | null>(null);
   const [products, setProducts] = useState<Product[]>(init);
   const [saving, setSaving] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editForm, setEditForm] = useState<Partial<Product>>({});
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [productFile, setProductFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -112,6 +114,11 @@ export default function AdminClient({ tickets, requests, products: init }: {
     if (!confirm("Удалить товар навсегда?")) return;
     await createClient().from("products").delete().eq("id", id);
     setProducts(p => p.filter(x => x.id !== id));
+  }
+  async function saveEdit(id: number) {
+    await createClient().from("products").update(editForm).eq("id", id);
+    setProducts(p => p.map(x => x.id === id ? { ...x, ...editForm } : x));
+    setEditingId(null); setEditForm({});
   }
 
   const TAB = (id: typeof tab, label: string, count?: number) => (
@@ -207,26 +214,41 @@ export default function AdminClient({ tickets, requests, products: init }: {
               {products.length === 0 ? (
                 <div className="liquid-glass" style={{ padding: 48, textAlign: "center" }}><p style={{ color: "var(--text-tertiary)", fontSize: "0.88rem" }}>Товаров пока нет</p></div>
               ) : products.map(p => (
-                <div key={p.id} className="liquid-glass" style={{ padding: "14px 18px", display: "flex", alignItems: "center", gap: 12 }}>
-                  {p.image_url ? (
-                    <img src={p.image_url} alt="" style={{ width: 44, height: 44, borderRadius: 8, objectFit: "cover", flexShrink: 0 }} />
-                  ) : (
-                    <div style={{ width: 44, height: 44, borderRadius: 8, background: p.color + "33", border: `1px solid ${p.color}55`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                      <div style={{ width: 12, height: 12, borderRadius: "50%", background: p.color }} />
+                <div key={p.id} className="liquid-glass" style={{ padding: "14px 18px", display: "flex", flexDirection: "column", gap: 10 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                    {p.image_url ? (
+                      <img src={p.image_url} alt="" style={{ width: 44, height: 44, borderRadius: 8, objectFit: "cover", flexShrink: 0 }} />
+                    ) : (
+                      <div style={{ width: 44, height: 44, borderRadius: 8, background: p.color + "33", border: `1px solid ${p.color}55`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                        <div style={{ width: 12, height: 12, borderRadius: "50%", background: p.color }} />
+                      </div>
+                    )}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ fontWeight: 600, fontSize: "0.88rem", marginBottom: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.title}</p>
+                      <p style={{ fontSize: "0.72rem", color: "var(--text-tertiary)" }}>
+                        {p.price} ₽ · {p.category === "prompts" ? "Промты" : "Шаблоны"} · {p.file_path ? "📎 файл есть" : "нет файла"}
+                      </p>
+                    </div>
+                    <button onClick={() => { setEditingId(editingId === p.id ? null : p.id); setEditForm({ title: p.title, description: p.description, price: p.price, tag: p.tag }); }}
+                      style={{ fontSize: "0.7rem", padding: "4px 10px", borderRadius: "980px", border: "1px solid rgba(255,255,255,0.15)", cursor: "pointer", flexShrink: 0, background: "rgba(255,255,255,0.06)", color: "var(--text-secondary)" }}>
+                      {editingId === p.id ? "Отмена" : "Изменить"}
+                    </button>
+                    <button onClick={() => toggleProduct(p.id, p.is_active)} style={{ fontSize: "0.7rem", fontWeight: 700, padding: "4px 12px", borderRadius: "980px", border: "none", cursor: "pointer", flexShrink: 0, background: p.is_active ? "rgba(48,209,88,0.15)" : "rgba(255,159,10,0.15)", color: p.is_active ? "var(--accent-green)" : "#ff9f0a" }}>
+                      {p.is_active ? "Активен" : "Пауза"}
+                    </button>
+                    <button onClick={() => deleteProduct(p.id)} style={{ fontSize: "0.7rem", padding: "4px 10px", borderRadius: "980px", border: "1px solid rgba(255,59,48,0.3)", cursor: "pointer", flexShrink: 0, background: "rgba(255,59,48,0.08)", color: "#ff3b30" }}>
+                      Удалить
+                    </button>
+                  </div>
+                  {editingId === p.id && (
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 80px", gap: 8, paddingTop: 8, borderTop: "1px solid rgba(255,255,255,0.07)" }}>
+                      <input value={editForm.title ?? ""} onChange={e => setEditForm(f => ({ ...f, title: e.target.value }))} placeholder="Название" style={inputStyle} />
+                      <input value={editForm.tag ?? ""} onChange={e => setEditForm(f => ({ ...f, tag: e.target.value }))} placeholder="Тег" style={inputStyle} />
+                      <input type="number" value={editForm.price ?? ""} onChange={e => setEditForm(f => ({ ...f, price: parseInt(e.target.value) }))} placeholder="Цена" style={inputStyle} />
+                      <textarea value={editForm.description ?? ""} onChange={e => setEditForm(f => ({ ...f, description: e.target.value }))} rows={2} placeholder="Описание" style={{ ...inputStyle, gridColumn: "1 / -1", resize: "none" }} />
+                      <button onClick={() => saveEdit(p.id)} className="btn-apple" style={{ gridColumn: "1 / -1", border: "none", cursor: "pointer", fontSize: "0.82rem" }}>Сохранить изменения</button>
                     </div>
                   )}
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontWeight: 600, fontSize: "0.88rem", marginBottom: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.title}</p>
-                    <p style={{ fontSize: "0.72rem", color: "var(--text-tertiary)" }}>
-                      {p.price} ₽ · {p.category === "prompts" ? "Промты" : "Шаблоны"} · {p.file_path ? "📎 файл есть" : "нет файла"}
-                    </p>
-                  </div>
-                  <button onClick={() => toggleProduct(p.id, p.is_active)} style={{ fontSize: "0.7rem", fontWeight: 700, padding: "4px 12px", borderRadius: "980px", border: "none", cursor: "pointer", flexShrink: 0, background: p.is_active ? "rgba(48,209,88,0.15)" : "rgba(255,159,10,0.15)", color: p.is_active ? "var(--accent-green)" : "#ff9f0a" }}>
-                    {p.is_active ? "Активен" : "Пауза"}
-                  </button>
-                  <button onClick={() => deleteProduct(p.id)} style={{ fontSize: "0.7rem", padding: "4px 10px", borderRadius: "980px", border: "1px solid rgba(255,59,48,0.3)", cursor: "pointer", flexShrink: 0, background: "rgba(255,59,48,0.08)", color: "#ff3b30" }}>
-                    Удалить
-                  </button>
                 </div>
               ))}
             </div>
