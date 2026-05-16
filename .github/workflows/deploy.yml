@@ -27,11 +27,8 @@ jobs:
           NEXT_PUBLIC_TINKOFF_TERMINAL: ${{ secrets.NEXT_PUBLIC_TINKOFF_TERMINAL }}
           TINKOFF_SECRET: ${{ secrets.TINKOFF_SECRET }}
 
-      - name: Prepare assets with worker
-        run: cp .open-next/worker.js .open-next/assets/_worker.js
-
-      - name: Deploy to Cloudflare Pages
-        run: npx wrangler pages deploy .open-next/assets --project-name=generalconclave --branch=main
+      - name: Deploy to Cloudflare Workers
+        run: npx wrangler deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: 7d06ee9e03b52d096ed1a09b6bb7d9f2
