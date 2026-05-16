@@ -54,7 +54,7 @@ export default function AboutPage() {
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
                 {[
                   ["Организация", "ИП Салихов Абдулгамид Маратович"],
-                  ["Сайт", "generalconclave.netlify.app"],
+                  ["Сайт", "generalconclave.general-conclave-industries.workers.dev"],
                   ["ИНН", "057205884027"],
                   ["ОГРНИП", "325050000029648"],
                 ].map(([k, v]) => (
