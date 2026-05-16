@@ -20,5 +20,10 @@ export default async function AdminPage() {
     .select("*")
     .order("created_at", { ascending: false });
 
-  return <AdminClient tickets={tickets ?? []} requests={requests ?? []} />;
+  const { data: products } = await supabase
+    .from("products")
+    .select("*")
+    .order("id");
+
+  return <AdminClient tickets={tickets ?? []} requests={requests ?? []} products={products ?? []} />;
 }
