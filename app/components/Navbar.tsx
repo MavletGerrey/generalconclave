@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter, usePathname } from "next/navigation";
@@ -51,7 +52,7 @@ export default function Navbar() {
             boxShadow: "0 2px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.15)",
             textDecoration: "none", flexShrink: 0,
           }}>
-            <div style={{ width: 22, height: 22, borderRadius: "50%", background: "linear-gradient(135deg, #2997ff, #0071e3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.55rem", fontWeight: 800, color: "#fff", flexShrink: 0, boxShadow: "0 2px 8px rgba(41,151,255,0.5)" }}>GC</div>
+            <Image src="/logo.jpg" alt="GC" width={24} height={24} style={{ borderRadius: "50%", flexShrink: 0, objectFit: "cover" }} />
             <span style={{ fontSize: "0.85rem", fontWeight: 700, letterSpacing: "-0.02em", background: "linear-gradient(135deg, #fff 40%, rgba(255,255,255,0.6) 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", whiteSpace: "nowrap" }}>General Conclave</span>
           </Link>
 
@@ -122,6 +123,10 @@ export default function Navbar() {
             onClick={e => e.stopPropagation()}
             style={{ width: "100%", maxWidth: "340px", background: "rgba(16,16,16,0.97)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "20px", backdropFilter: "blur(40px)", padding: "12px", display: "flex", flexDirection: "column", gap: "6px", animation: "fade-up 0.2s ease both", boxShadow: "0 24px 60px rgba(0,0,0,0.5)" }}
           >
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", padding: "8px 8px 12px", borderBottom: "1px solid rgba(255,255,255,0.08)", marginBottom: "2px" }}>
+              <Image src="/logo.jpg" alt="GC" width={32} height={32} style={{ borderRadius: "50%", objectFit: "cover" }} />
+              <span style={{ fontWeight: 700, fontSize: "0.9rem", letterSpacing: "-0.02em" }}>General Conclave</span>
+            </div>
             {[
               ["/digital", "Digital"],
               ["/tech", "Tech"],
