@@ -39,7 +39,8 @@ async function getGroqResponse(messages: {role: string, content: string}[]): Pro
   return data.choices?.[0]?.message?.content || "Произошла ошибка. Попробуйте ещё раз.";
 }
 
-async function getOrCreateChat(supabase: ReturnType<typeof createClient>, chatId: number) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function getOrCreateChat(supabase: any, chatId: number) {
   const { data } = await (supabase as any)
     .from("bot_chats")
     .select("*")
