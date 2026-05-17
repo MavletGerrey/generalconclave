@@ -82,7 +82,7 @@ export default async function DigitalPage() {
           <p className="anim-3" style={{ color: "var(--text-secondary)", fontSize: "1.1rem" }}>Скачайте сразу после оплаты. Без ожиданий.</p>
         </section>
 
-        <section className="px-6 md:px-12 pb-24" style={{ paddingTop: "2.5rem" }}>
+        <section style={{ padding: "2.5rem 20px 6rem" }}>
           {items.length === 0 ? (
             <div style={{ maxWidth: "480px", margin: "0 auto", textAlign: "center", padding: "60px 24px" }}>
               <div style={{ width: 72, height: 72, borderRadius: "50%", background: "rgba(41,151,255,0.1)", border: "1px solid rgba(41,151,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 1.5rem", fontSize: "1.8rem" }}>🔜</div>
@@ -90,7 +90,7 @@ export default async function DigitalPage() {
               <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", lineHeight: 1.7 }}>Скоро здесь появятся промт-пакеты, AI-скрипты и шаблоны сайтов. Следите за обновлениями.</p>
             </div>
           ) : (
-            <div style={{ maxWidth: "1000px", margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "20px", alignItems: "stretch" }}>
+            <div style={{ maxWidth: "1000px", margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "16px", alignItems: "stretch" }}>
               {items.map((p, i) => (
                 <FadeUp key={p.id} delay={i * 0.12} className="liquid-glass" style={{ padding: 0, display: "flex", flexDirection: "column", overflow: "hidden" }}>
                   <ProductCover p={p} />
