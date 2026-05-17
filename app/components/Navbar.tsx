@@ -57,7 +57,7 @@ export default function Navbar() {
           </Link>
 
           {/* Десктоп меню — центр */}
-          <div style={{ display: "flex", alignItems: "center", gap: "2rem", fontSize: "0.875rem", color: "var(--text-secondary)" }} className="hidden md:flex">
+          <div style={{ alignItems: "center", gap: "2rem", fontSize: "0.875rem", color: "var(--text-secondary)" }} className="hidden md:flex">
             <Link href="/digital" className="hover:text-white transition-colors">Digital</Link>
             <Link href="/tech" className="hover:text-white transition-colors">Tech</Link>
             <Link href="/about" className="hover:text-white transition-colors">О нас</Link>
