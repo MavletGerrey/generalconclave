@@ -42,7 +42,7 @@ export default function Particles() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       t += 0.016;
       for (const d of dots) {
-        const a = d.alpha * (0.5 + 0.5 * Math.sin(t * d.speed * 60 + d.phase));
+        const a = d.alpha * 0.7 * (0.4 + 0.6 * Math.sin(t * d.speed * 60 + d.phase));
         ctx.beginPath();
         ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(255,255,255,${a.toFixed(3)})`;
@@ -66,8 +66,8 @@ export default function Particles() {
     <canvas
       ref={canvasRef}
       style={{
-        position: "fixed", inset: 0, zIndex: 0,
-        pointerEvents: "none", opacity: 0.7,
+        position: "fixed", inset: 0, zIndex: 9999,
+        pointerEvents: "none", opacity: 0.35,
       }}
     />
   );
