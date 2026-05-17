@@ -151,10 +151,13 @@ export async function POST(req: NextRequest) {
 
   const history = (chat.messages as {role: string, content: string}[]) || [];
 
-  // /start — сброс диалога
-  if (userText === "/start") {
-    await (supabase as any).from("bot_chats").update({ messages: [] }).eq("telegram_chat_id", chatId);
-    const greeting = await getGroqResponse([]);
+  // /start — сброс диалога (может содержать название услуги)
+  if (userText.startsWith("/start")) {
+    const param = userText.replace("/start", "").trim();
+    const serviceHint = param ? `Клиент пришёл со страницы услуги: "${param.replace(/_/g, " ")}". Начни с короткого приветствия и уточни что именно их интересует в этой услуге.` : "";
+    await (supabase as any).from("bot_chats").upsert({ telegram_chat_id: chatId, messages: [], is_admin: false }, { onConflict: "telegram_chat_id" });
+    const initMessages = serviceHint ? [{ role: "user", content: serviceHint }] : [];
+    const greeting = await getGroqResponse(initMessages);
     await replyToUser(chatId, greeting);
     await (supabase as any).from("bot_chats").update({
       messages: [{ role: "assistant", content: greeting }],
