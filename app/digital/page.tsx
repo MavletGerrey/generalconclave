@@ -75,7 +75,7 @@ export default async function DigitalPage() {
     <main style={{ background: "var(--bg)", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       <Navbar />
       <div style={{ flex: 1 }}>
-        <section className="px-6 md:px-12 pt-40 pb-16 text-center relative overflow-hidden">
+        <section style={{ position: "relative", padding: "100px 24px 80px", textAlign: "center", overflow: "hidden" }}>
           <div style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)", width: "600px", height: "400px", background: "radial-gradient(ellipse, rgba(41,151,255,0.1) 0%, transparent 70%)", pointerEvents: "none" }} />
           <p className="apple-tag anim-1 mb-4">Conclave Digital</p>
           <h1 style={{ fontSize: "clamp(2.5rem, 6vw, 5rem)", fontWeight: 700, letterSpacing: "-0.04em" }} className="gradient-text anim-2 mb-4">Цифровые продукты</h1>
