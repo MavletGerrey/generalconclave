@@ -40,7 +40,7 @@ async function getGroqResponse(messages: {role: string, content: string}[]): Pro
 }
 
 async function getOrCreateChat(supabase: ReturnType<typeof createClient>, chatId: number) {
-  const { data } = await supabase
+  const { data } = await (supabase as any)
     .from("bot_chats")
     .select("*")
     .eq("telegram_chat_id", chatId)
@@ -48,7 +48,7 @@ async function getOrCreateChat(supabase: ReturnType<typeof createClient>, chatId
 
   if (data) return data;
 
-  const { data: newChat } = await supabase
+  const { data: newChat } = await (supabase as any)
     .from("bot_chats")
     .insert({ telegram_chat_id: chatId, messages: [] })
     .select()
@@ -85,10 +85,10 @@ export async function POST(req: NextRequest) {
 
   // Команда /start — сброс
   if (userText === "/start") {
-    await supabase.from("bot_chats").update({ messages: [] }).eq("telegram_chat_id", chatId);
+    await (supabase as any).from("bot_chats").update({ messages: [] }).eq("telegram_chat_id", chatId);
     const greeting = await getGroqResponse([]);
     await replyToUser(chatId, greeting);
-    await supabase.from("bot_chats").update({ messages: [{ role: "assistant", content: greeting }], updated_at: new Date().toISOString() }).eq("telegram_chat_id", chatId);
+    await (supabase as any).from("bot_chats").update({ messages: [{ role: "assistant", content: greeting }], updated_at: new Date().toISOString() }).eq("telegram_chat_id", chatId);
     return NextResponse.json({ ok: true });
   }
 
@@ -96,7 +96,7 @@ export async function POST(req: NextRequest) {
   const aiReply = await getGroqResponse(updatedHistory);
   const finalHistory = [...updatedHistory, { role: "assistant", content: aiReply }];
 
-  await supabase.from("bot_chats")
+  await (supabase as any).from("bot_chats")
     .update({ messages: finalHistory, updated_at: new Date().toISOString() })
     .eq("telegram_chat_id", chatId);
 
