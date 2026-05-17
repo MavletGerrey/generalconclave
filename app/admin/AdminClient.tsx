@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Chat from "../components/Chat";
 import { createClient } from "@/lib/supabase/client";
@@ -43,6 +43,15 @@ export default function AdminClient({ tickets, requests, products: init }: {
   const [activeTicket, setActiveTicket] = useState<Ticket | null>(null);
   const [products, setProducts] = useState<Product[]>(init);
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    const supabase = createClient();
+    const channel = supabase.channel("admin-tickets")
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "tickets" },
+        (payload) => setTickets(prev => [payload.new as Ticket, ...prev])
+      ).subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, []);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editForm, setEditForm] = useState<Partial<Product>>({});
   const [imageFile, setImageFile] = useState<File | null>(null);

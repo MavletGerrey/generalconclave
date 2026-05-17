@@ -32,6 +32,7 @@ const labelStyle = {
 
 type Ticket = { id: string; service: string; status: string; created_at: string };
 type Purchase = { id: string; product_id: number; created_at: string; products: { title: string; file_path: string | null; image_url: string | null; price: number } };
+type Review = { ticket_id: string; rating: number };
 
 export default function AccountClient({ user }: { user: User }) {
   const router = useRouter();
@@ -45,6 +46,11 @@ export default function AccountClient({ user }: { user: User }) {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [activeTicket, setActiveTicket] = useState<Ticket | null>(null);
   const [purchases, setPurchases] = useState<Purchase[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [ratingTicketId, setRatingTicketId] = useState<string | null>(null);
+  const [ratingValue, setRatingValue] = useState(0);
+  const [ratingComment, setRatingComment] = useState("");
+  const [ratingDone, setRatingDone] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
@@ -53,6 +59,9 @@ export default function AccountClient({ user }: { user: User }) {
     });
     supabase.from("purchases").select("*, products(title, file_path, image_url, price)").order("created_at", { ascending: false }).then(({ data }) => {
       setPurchases((data as Purchase[]) ?? []);
+    });
+    supabase.from("reviews").select("ticket_id, rating").then(({ data }) => {
+      setReviews((data as Review[]) ?? []);
     });
   }, []);
 
@@ -74,6 +83,15 @@ export default function AccountClient({ user }: { user: User }) {
     setSavingPassword(false);
     if (error) { setPasswordMsg({ type: "err", text: "Ошибка. Попробуйте снова." }); }
     else { setPasswordMsg({ type: "ok", text: "Пароль успешно изменён" }); setNewPassword(""); }
+  }
+
+  async function submitRating() {
+    if (!ratingTicketId || !ratingValue) return;
+    const supabase = createClient();
+    await supabase.from("reviews").insert({ ticket_id: ratingTicketId, user_id: user.id, rating: ratingValue, comment: ratingComment });
+    setReviews(r => [...r, { ticket_id: ratingTicketId, rating: ratingValue }]);
+    setRatingTicketId(null); setRatingValue(0); setRatingComment(""); setRatingDone(true);
+    setTimeout(() => setRatingDone(false), 3000);
   }
 
   const initial = (username || user.email || "?")[0].toUpperCase();
@@ -185,19 +203,49 @@ export default function AccountClient({ user }: { user: User }) {
                   </div>
                 ) : (
                   <div style={{ display: "flex", flexDirection: "column" }}>
-                    {tickets.map(t => (
-                      <button key={t.id} onClick={() => setActiveTicket(t)} style={{ padding: "14px 20px", textAlign: "left", background: activeTicket?.id === t.id ? "rgba(41,151,255,0.1)" : "transparent", border: "none", borderBottom: "1px solid rgba(255,255,255,0.06)", cursor: "pointer", transition: "background 0.15s" }}>
-                        <p style={{ fontWeight: 500, fontSize: "0.88rem", color: "var(--text)", marginBottom: 4 }}>{t.service}</p>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                          <p style={{ fontSize: "0.72rem", color: "var(--text-tertiary)" }}>
-                            {new Date(t.created_at).toLocaleDateString("ru-RU")}
-                          </p>
-                          <span style={{ fontSize: "0.65rem", fontWeight: 700, color: t.status === "open" ? "var(--accent-green)" : "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
-                            {t.status === "open" ? "Открыт" : t.status === "in_progress" ? "В работе" : "Закрыт"}
-                          </span>
+                    {tickets.map(t => {
+                      const hasReview = reviews.some(r => r.ticket_id === t.id);
+                      return (
+                        <div key={t.id}>
+                          <button onClick={() => setActiveTicket(t)} style={{ width: "100%", padding: "14px 20px", textAlign: "left", background: activeTicket?.id === t.id ? "rgba(41,151,255,0.1)" : "transparent", border: "none", borderBottom: "1px solid rgba(255,255,255,0.06)", cursor: "pointer", transition: "background 0.15s" }}>
+                            <p style={{ fontWeight: 500, fontSize: "0.88rem", color: "var(--text)", marginBottom: 4 }}>{t.service}</p>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                              <p style={{ fontSize: "0.72rem", color: "var(--text-tertiary)" }}>{new Date(t.created_at).toLocaleDateString("ru-RU")}</p>
+                              <span style={{ fontSize: "0.65rem", fontWeight: 700, color: t.status === "open" ? "var(--accent-green)" : t.status === "in_progress" ? "var(--accent)" : "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                                {t.status === "open" ? "Открыт" : t.status === "in_progress" ? "В работе" : "Закрыт"}
+                              </span>
+                            </div>
+                          </button>
+                          {t.status === "closed" && !hasReview && (
+                            <div style={{ padding: "10px 20px", background: "rgba(255,215,0,0.04)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                              {ratingTicketId === t.id ? (
+                                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                                  <div style={{ display: "flex", gap: 4 }}>
+                                    {[1,2,3,4,5].map(s => (
+                                      <button key={s} onClick={() => setRatingValue(s)} style={{ fontSize: "1.4rem", background: "none", border: "none", cursor: "pointer", opacity: s <= ratingValue ? 1 : 0.3, transition: "opacity 0.15s" }}>★</button>
+                                    ))}
+                                  </div>
+                                  <input value={ratingComment} onChange={e => setRatingComment(e.target.value)} placeholder="Комментарий (необязательно)" style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, padding: "6px 10px", color: "var(--text)", fontSize: "0.82rem", outline: "none" }} />
+                                  <div style={{ display: "flex", gap: 6 }}>
+                                    <button onClick={submitRating} disabled={!ratingValue} className="btn-apple" style={{ flex: 1, border: "none", cursor: ratingValue ? "pointer" : "not-allowed", opacity: ratingValue ? 1 : 0.5, fontSize: "0.8rem" }}>Отправить</button>
+                                    <button onClick={() => setRatingTicketId(null)} style={{ padding: "6px 12px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.1)", background: "none", cursor: "pointer", color: "var(--text-tertiary)", fontSize: "0.8rem" }}>Отмена</button>
+                                  </div>
+                                </div>
+                              ) : (
+                                <button onClick={() => setRatingTicketId(t.id)} style={{ fontSize: "0.78rem", color: "#ffd60a", background: "rgba(255,214,10,0.08)", border: "1px solid rgba(255,214,10,0.2)", borderRadius: 8, padding: "5px 12px", cursor: "pointer" }}>
+                                  ★ Оценить работу
+                                </button>
+                              )}
+                            </div>
+                          )}
+                          {t.status === "closed" && hasReview && (
+                            <div style={{ padding: "6px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                              <span style={{ fontSize: "0.75rem", color: "var(--accent-green)" }}>✓ Оценка оставлена</span>
+                            </div>
+                          )}
                         </div>
-                      </button>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </div>
