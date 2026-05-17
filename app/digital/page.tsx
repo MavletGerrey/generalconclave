@@ -1,39 +1,49 @@
+import type { Metadata } from "next";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import FadeUp from "../components/FadeUp";
 import BuyButton from "../components/BuyButton";
 import { createClient } from "@/lib/supabase/server";
 
-type Product = {
-  id: number;
-  title: string;
-  description: string;
-  price: number;
-  tag: string;
-  color: string;
-  count: string;
-  unit: string;
+export const metadata: Metadata = {
+  title: "Цифровые продукты",
+  description: "Готовые промт-пакеты, AI-скрипты и шаблоны сайтов. Скачайте сразу после оплаты.",
+  openGraph: {
+    title: "Conclave Digital — Цифровые продукты",
+    description: "Промты для ChatGPT, Midjourney, скрипты продаж, шаблоны сайтов. Мгновенная доставка после оплаты.",
+  },
 };
 
-const FALLBACK: Product[] = [
-  { id: 1, title: "Промт-пак для ChatGPT", description: "50 проверенных промтов для бизнеса, копирайтинга и маркетинга.", price: 490, tag: "Промты", color: "#2997ff", count: "50", unit: "промтов" },
-  { id: 2, title: "SEO-промты для контента", description: "Шаблоны для написания SEO-статей с нуля через нейросеть.", price: 390, tag: "Промты", color: "#30d158", count: "30", unit: "шаблонов" },
-  { id: 3, title: "AI-ассистент для продаж", description: "Готовый набор скриптов и промтов для отдела продаж.", price: 790, tag: "Продукт", color: "#bf5af2", count: "40", unit: "скриптов" },
-  { id: 4, title: "Промты для Midjourney", description: "100 визуальных промтов для генерации профессиональных изображений.", price: 590, tag: "Промты", color: "#ff9f0a", count: "100", unit: "промтов" },
-];
+type Product = {
+  id: number; title: string; description: string; price: number;
+  tag: string; color: string; count: string; unit: string;
+  image_url?: string; category?: string;
+};
 
 const BG_MAP: Record<string, [string, string]> = {
   "#2997ff": ["#0a2540", "#0071e3"],
   "#30d158": ["#0a2e1a", "#25a244"],
   "#bf5af2": ["#1a0a2e", "#9b30d9"],
   "#ff9f0a": ["#2e1a00", "#c97300"],
-};
-
-const ICON_MAP: Record<string, string> = {
-  "#2997ff": "ChatGPT", "#30d158": "SEO", "#bf5af2": "AI", "#ff9f0a": "MJ",
+  "#ff3b30": ["#2e0a0a", "#c72020"],
+  "#5e5ce6": ["#0a0a2e", "#3a38b0"],
+  "#64d2ff": ["#001a2e", "#0090cc"],
+  "#ffd60a": ["#2e2600", "#c4a800"],
 };
 
 function ProductCover({ p }: { p: Product }) {
+  if (p.image_url) {
+    return (
+      <div style={{ width: "100%", height: 200, position: "relative", overflow: "hidden", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
+        <img src={p.image_url} alt={p.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 50%)" }} />
+        <div style={{ position: "absolute", top: 14, left: 16, display: "inline-flex", alignItems: "center", gap: 6, background: `${p.color}30`, border: `1px solid ${p.color}50`, borderRadius: "980px", padding: "3px 10px", backdropFilter: "blur(8px)" }}>
+          <span style={{ fontSize: "0.62rem", fontWeight: 700, color: p.color, letterSpacing: "0.06em", textTransform: "uppercase" }}>{p.tag}</span>
+        </div>
+      </div>
+    );
+  }
+
   const bg = BG_MAP[p.color] ?? ["#111", "#333"];
   return (
     <div style={{ width: "100%", height: 180, position: "relative", overflow: "hidden", background: `linear-gradient(135deg, ${bg[0]} 0%, ${bg[1]} 100%)`, borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
@@ -48,7 +58,7 @@ function ProductCover({ p }: { p: Product }) {
             <p style={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.5)", letterSpacing: "0.05em", textTransform: "uppercase", marginTop: 2 }}>{p.unit}</p>
           </div>
           <div style={{ width: 52, height: 52, borderRadius: 14, background: `linear-gradient(135deg, ${p.color}cc, ${p.color}66)`, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: "0.85rem", color: "#fff", boxShadow: `0 8px 24px ${p.color}50` }}>
-            {ICON_MAP[p.color] ?? p.tag.slice(0, 2).toUpperCase()}
+            {p.tag.slice(0, 2).toUpperCase()}
           </div>
         </div>
       </div>
@@ -59,12 +69,11 @@ function ProductCover({ p }: { p: Product }) {
 export default async function DigitalPage() {
   const supabase = await createClient();
   const { data } = await supabase.from("products").select("*").eq("is_active", true).order("id");
-  const items: Product[] = (data && data.length > 0) ? data : FALLBACK;
+  const items: Product[] = data ?? [];
 
   return (
     <main style={{ background: "var(--bg)", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       <Navbar />
-
       <div style={{ flex: 1 }}>
         <section className="px-6 md:px-12 pt-40 pb-16 text-center relative overflow-hidden">
           <div style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)", width: "600px", height: "400px", background: "radial-gradient(ellipse, rgba(41,151,255,0.1) 0%, transparent 70%)", pointerEvents: "none" }} />
@@ -74,25 +83,32 @@ export default async function DigitalPage() {
         </section>
 
         <section className="px-6 md:px-12 pb-24" style={{ paddingTop: "2.5rem" }}>
-          <div style={{ maxWidth: "1000px", margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "20px", alignItems: "stretch" }}>
-            {items.map((p, i) => (
-              <FadeUp key={p.id} delay={i * 0.12} className="liquid-glass" style={{ padding: 0, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-                <ProductCover p={p} />
-                <div style={{ padding: "24px 28px 28px", display: "flex", flexDirection: "column", flex: 1 }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
-                    <span style={{ fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: p.color }}>{p.tag}</span>
-                    <span style={{ fontWeight: 700, fontSize: "1.05rem" }}>{p.price} ₽</span>
+          {items.length === 0 ? (
+            <div style={{ maxWidth: "480px", margin: "0 auto", textAlign: "center", padding: "60px 24px" }}>
+              <div style={{ width: 72, height: 72, borderRadius: "50%", background: "rgba(41,151,255,0.1)", border: "1px solid rgba(41,151,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 1.5rem", fontSize: "1.8rem" }}>🔜</div>
+              <h2 style={{ fontWeight: 700, fontSize: "1.3rem", letterSpacing: "-0.03em", marginBottom: "0.75rem" }}>Каталог пополняется</h2>
+              <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", lineHeight: 1.7 }}>Скоро здесь появятся промт-пакеты, AI-скрипты и шаблоны сайтов. Следите за обновлениями.</p>
+            </div>
+          ) : (
+            <div style={{ maxWidth: "1000px", margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "20px", alignItems: "stretch" }}>
+              {items.map((p, i) => (
+                <FadeUp key={p.id} delay={i * 0.12} className="liquid-glass" style={{ padding: 0, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+                  <ProductCover p={p} />
+                  <div style={{ padding: "24px 28px 28px", display: "flex", flexDirection: "column", flex: 1 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
+                      <span style={{ fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: p.color }}>{p.tag}</span>
+                      <span style={{ fontWeight: 700, fontSize: "1.05rem" }}>{p.price} ₽</span>
+                    </div>
+                    <h3 style={{ fontWeight: 700, fontSize: "1.1rem", letterSpacing: "-0.03em", marginBottom: "0.5rem" }}>{p.title}</h3>
+                    <p style={{ color: "var(--text-secondary)", fontSize: "0.88rem", lineHeight: 1.7, marginBottom: "1.5rem", flex: 1 }}>{p.description}</p>
+                    <BuyButton productId={p.id} title={p.title} price={p.price} />
                   </div>
-                  <h3 style={{ fontWeight: 700, fontSize: "1.1rem", letterSpacing: "-0.03em", marginBottom: "0.5rem" }}>{p.title}</h3>
-                  <p style={{ color: "var(--text-secondary)", fontSize: "0.88rem", lineHeight: 1.7, marginBottom: "1.5rem", flex: 1 }}>{p.description}</p>
-                  <BuyButton productId={p.id} title={p.title} price={p.price} />
-                </div>
-              </FadeUp>
-            ))}
-          </div>
+                </FadeUp>
+              ))}
+            </div>
+          )}
         </section>
       </div>
-
       <Footer />
     </main>
   );

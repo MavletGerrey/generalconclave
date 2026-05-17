@@ -72,10 +72,14 @@ export default function RequestModal({ service, onClose }: Props) {
           sender: "client",
           content: message,
         });
+        fetch("/api/notify", { method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ type: "ticket", service: service || "Общий вопрос", message }) });
       }
     } else {
       // Не залогинен — сохраняем в requests
       await supabase.from("requests").insert({ name, email, subject: service || "Заявка", message });
+      fetch("/api/notify", { method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "request", name, email, service: service || "Заявка", message }) });
     }
 
     setLoading(false);
