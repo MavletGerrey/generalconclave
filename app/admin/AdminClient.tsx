@@ -41,6 +41,7 @@ export default function AdminClient({ tickets, requests, products: init }: {
 }) {
   const [tab, setTab] = useState<"tickets" | "requests" | "products">("tickets");
   const [activeTicket, setActiveTicket] = useState<Ticket | null>(null);
+  const [ticketList, setTicketList] = useState<Ticket[]>(tickets);
   const [products, setProducts] = useState<Product[]>(init);
   const [saving, setSaving] = useState(false);
 
@@ -48,7 +49,7 @@ export default function AdminClient({ tickets, requests, products: init }: {
     const supabase = createClient();
     const channel = supabase.channel("admin-tickets")
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "tickets" },
-        (payload) => setTickets(prev => [payload.new as Ticket, ...prev])
+        (payload) => setTicketList(prev => [payload.new as Ticket, ...prev])
       ).subscribe();
     return () => { supabase.removeChannel(channel); };
   }, []);
@@ -151,7 +152,7 @@ export default function AdminClient({ tickets, requests, products: init }: {
 
       <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "40px 24px" }}>
         <div style={{ display: "flex", gap: 4, marginBottom: "1.5rem", background: "rgba(255,255,255,0.04)", borderRadius: 12, padding: 4, width: "fit-content" }}>
-          {TAB("tickets", "Тикеты", tickets.filter(t => t.status === "open").length)}
+          {TAB("tickets", "Тикеты", ticketList.filter(t => t.status === "open").length)}
           {TAB("requests", "Заявки", requests.filter(r => r.status === "new").length)}
           {TAB("products", `Товары (${products.length})`)}
         </div>
@@ -161,11 +162,11 @@ export default function AdminClient({ tickets, requests, products: init }: {
           <div style={{ display: "grid", gridTemplateColumns: activeTicket ? "320px 1fr" : "1fr", gap: 16 }}>
             <div className="liquid-glass" style={{ overflow: "hidden" }}>
               <div style={{ padding: "16px 20px", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
-                <h2 style={{ fontWeight: 600, fontSize: "0.95rem" }}>Все тикеты ({tickets.length})</h2>
+                <h2 style={{ fontWeight: 600, fontSize: "0.95rem" }}>Все тикеты ({ticketList.length})</h2>
               </div>
-              {tickets.length === 0 ? <p style={{ padding: "32px 20px", color: "var(--text-tertiary)", fontSize: "0.88rem", textAlign: "center" }}>Тикетов пока нет</p> : (
+              {ticketList.length === 0 ? <p style={{ padding: "32px 20px", color: "var(--text-tertiary)", fontSize: "0.88rem", textAlign: "center" }}>Тикетов пока нет</p> : (
                 <div style={{ display: "flex", flexDirection: "column", maxHeight: 600, overflowY: "auto" }}>
-                  {tickets.map(t => (
+                  {ticketList.map(t => (
                     <button key={t.id} onClick={() => setActiveTicket(t)} style={{ padding: "14px 20px", textAlign: "left", background: activeTicket?.id === t.id ? "rgba(41,151,255,0.1)" : "transparent", border: "none", borderBottom: "1px solid rgba(255,255,255,0.06)", cursor: "pointer" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
                         <p style={{ fontWeight: 600, fontSize: "0.88rem", color: "var(--text)" }}>{t.service}</p>
