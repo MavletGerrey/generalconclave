@@ -20,39 +20,30 @@ body::before {
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  background-image: radial-gradient(circle, rgba(255,255,255,0.55) 1.5px, transparent 1.5px);
+  background-image: radial-gradient(circle, rgba(255,255,255,0.18) 1px, transparent 1px);
   background-size: 32px 32px;
-  animation: dots-pulse 6s ease-in-out infinite;
+  animation: dots-pulse 8s ease-in-out infinite;
 }
 
-/* Переливающаяся волна поверх сетки */
+/* Едва заметная волна */
 body::after {
   content: '';
   position: fixed;
-  inset: -50%;
-  width: 200%;
-  height: 200%;
+  inset: 0;
   z-index: 2;
   pointer-events: none;
-  background: linear-gradient(
-    105deg,
-    transparent 35%,
-    rgba(41,151,255,0.18) 45%,
-    rgba(255,255,255,0.22) 50%,
-    rgba(41,151,255,0.18) 55%,
-    transparent 65%
-  );
-  animation: shimmer-sweep 5s linear infinite;
+  background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(41,151,255,0.04) 0%, transparent 70%);
+  animation: shimmer-glow 10s ease-in-out infinite;
 }
 
 @keyframes dots-pulse {
-  0%, 100% { opacity: 0.45; }
-  50% { opacity: 0.75; }
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.55; }
 }
 
-@keyframes shimmer-sweep {
-  0%   { transform: translateX(-60%) translateY(-60%); }
-  100% { transform: translateX(60%) translateY(60%); }
+@keyframes shimmer-glow {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
 }
 
 body {
@@ -142,20 +133,20 @@ body {
 .liquid-glass {
   background: linear-gradient(
     135deg,
-    rgba(255,255,255,0.1) 0%,
-    rgba(255,255,255,0.04) 50%,
-    rgba(255,255,255,0.07) 100%
+    rgba(18,18,22,0.88) 0%,
+    rgba(10,10,14,0.92) 50%,
+    rgba(14,14,18,0.9) 100%
   );
-  border: 1px solid rgba(255,255,255,0.15);
-  border-top-color: rgba(255,255,255,0.3);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-top-color: rgba(255,255,255,0.22);
   border-radius: 22px;
-  backdrop-filter: blur(40px) saturate(180%) brightness(1.05);
-  -webkit-backdrop-filter: blur(40px) saturate(180%) brightness(1.05);
+  backdrop-filter: blur(40px) saturate(160%);
+  -webkit-backdrop-filter: blur(40px) saturate(160%);
   box-shadow:
-    0 8px 32px rgba(0,0,0,0.5),
-    inset 0 1px 0 rgba(255,255,255,0.18),
-    inset 0 -1px 0 rgba(255,255,255,0.04),
-    inset 1px 0 0 rgba(255,255,255,0.08);
+    0 8px 32px rgba(0,0,0,0.7),
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    inset 0 -1px 0 rgba(255,255,255,0.03),
+    inset 1px 0 0 rgba(255,255,255,0.06);
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   position: relative;
   z-index: 5;
@@ -179,9 +170,9 @@ body {
 .liquid-glass:hover {
   background: linear-gradient(
     135deg,
-    rgba(255,255,255,0.14) 0%,
-    rgba(255,255,255,0.06) 50%,
-    rgba(255,255,255,0.1) 100%
+    rgba(22,22,28,0.92) 0%,
+    rgba(14,14,18,0.95) 50%,
+    rgba(18,18,24,0.93) 100%
   );
   border-color: rgba(255,255,255,0.25);
   border-top-color: rgba(255,255,255,0.45);
@@ -196,8 +187,8 @@ body {
 .liquid-glass-dark {
   background: linear-gradient(
     160deg,
-    rgba(255,255,255,0.06) 0%,
-    rgba(255,255,255,0.02) 100%
+    rgba(15,15,20,0.9) 0%,
+    rgba(8,8,12,0.95) 100%
   );
   border: 1px solid rgba(255,255,255,0.1);
   border-top-color: rgba(255,255,255,0.18);
@@ -216,7 +207,7 @@ body {
 ═══════════════════════════════════════ */
 
 .navbar-glass {
-  background: rgba(0,0,0,0.55);
+  background: rgba(0,0,0,0.88);
   backdrop-filter: saturate(200%) blur(30px);
   -webkit-backdrop-filter: saturate(200%) blur(30px);
   border-bottom: 1px solid rgba(255,255,255,0.07);
